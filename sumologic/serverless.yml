@@ -1,0 +1,60 @@
+service: sumologic-cloudwatch
+
+provider:
+  name: aws
+  runtime: nodejs4.3
+  region: ap-southeast-2
+  iamRoleStatements:
+  - Effect: "Allow"
+    Action:
+    - "s3:ListBucket"
+    Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }
+  - Effect: "Allow"
+    Action:
+    - "s3:PutObject"
+    Resource:
+      Fn::Join:
+      - ""
+      - - "arn:aws:s3:::"
+        - "Ref" : "ServerlessDeploymentBucket"
+        - "/*"
+
+functions:
+  sumologiclogstream:
+    name: serverless-sumologic-cloudwatchlog-stream
+    handler: cloudwatch/streamlogs.handler
+    events:
+      ##Adding multiple cloudwatch Logs
+      - cloudwatchLog: "${env:CLOUDWATCH_LOG}"
+    timeout: 5
+    memorySize: 512
+    environment:
+      SUMO_ENDPOINT: "${env:SUMO_ENDPOINT}"
+
+resources:
+  Resources:
+    #Adding AWS lambda access policy.
+    AWSLambdaVPCAccessExecutionPolicy:
+      Type: AWS::IAM::ManagedPolicy
+      Properties:
+        Description: Policy for VPC based Lambda functions.
+        Roles:
+        - {"Ref" : "IamRoleLambdaExecution"}
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+              - "logs:CreateLogGroup"
+              - "logs:CreateLogStream"
+              - "logs:PutLogEvents"
+              - "ec2:CreateNetworkInterface"
+              - "ec2:DescribeNetworkInterfaces"
+              - "ec2:DetachNetworkInterface"
+              - "ec2:DeleteNetworkInterface"
+            Resource: "*"
+          - Effect: Allow
+            Action:
+              - "cloudwatch:Put*"
+              - "cloudwatch:Get*"
+            Resource: "*"
