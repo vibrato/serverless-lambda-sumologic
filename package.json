@@ -1,0 +1,22 @@
+{
+  "name": "serverless-lambda-sumologic",
+  "version": "1.0.0",
+  "description": "This README would normally document whatever steps are necessary to get your application up and running.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com:vibrato/serverless-lambda-sumologic.git"
+  },
+  "author": "Ray@vibrato",
+  "license": "ISC",
+  "homepage": "https://github.com/vibrato/serverless-lambda-sumologic",
+  "devDependencies": {
+    "serverless": "^1.25.0"
+  },
+  "dependencies": {
+    "serverless": "^1.25.0"
+  }
+}
